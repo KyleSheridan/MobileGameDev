@@ -4,6 +4,9 @@ ScriptsOnlyBuild:
     - ARTapToPlaceObject
     - BallController
     - ButtonHandler
+    - LevelManager
+    - PauseScreenBehaviour
+    - UISafeAreaHandler
     Unity.CollabProxy.Editor.dll:
     - Unity.Cloud.Collaborate.UserInterface.CollaborateWindow
     - Unity.Cloud.Collaborate.UserInterface.WindowCache
@@ -45,11 +48,14 @@ ScriptsOnlyBuild:
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.StandaloneInputModule
+    - UnityEngine.UI.AspectRatioFitter
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.ContentSizeFitter
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.Text
+    - UnityEngine.UI.VerticalLayoutGroup
   sceneClasses:
     Assets/Scenes/ARLevel1.unity:
     - Class: 1
@@ -101,6 +107,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 2644}
     - Class: 114
+      Script: {instanceID: 2732}
+    - Class: 114
       Script: {instanceID: 2746}
     - Class: 114
       Script: {instanceID: 2800}
@@ -117,6 +125,10 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 3546}
     - Class: 114
+      Script: {instanceID: 3550}
+    - Class: 114
+      Script: {instanceID: 3706}
+    - Class: 114
       Script: {instanceID: 4006}
     - Class: 114
       Script: {instanceID: 4072}
@@ -132,6 +144,12 @@ ScriptsOnlyBuild:
       Script: {instanceID: 5212}
     - Class: 114
       Script: {instanceID: 5376}
+    - Class: 114
+      Script: {instanceID: 18274}
+    - Class: 114
+      Script: {instanceID: 42272}
+    - Class: 114
+      Script: {instanceID: 54440}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -573,7 +591,7 @@ ScriptsOnlyBuild:
     className: Cinemachine3rdPersonFollow
   - hash:
       serializedVersion: 2
-      Hash: dd36f5f159887df146132a13d4a1a9a1
+      Hash: 49dc1a162642ccace88ef9e1cd8714b4
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: ARTapToPlaceObject
@@ -1137,7 +1155,7 @@ ScriptsOnlyBuild:
     className: ARTrackedImageManager
   - hash:
       serializedVersion: 2
-      Hash: 23baa90c1458dded9903bbce6240389a
+      Hash: 1f98d58cbf1f2c4af6353cdbc671da0d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BallController
@@ -1201,7 +1219,31 @@ ScriptsOnlyBuild:
     assemblyName: Cinemachine.dll
     namespaceName: Cinemachine
     className: CinemachineBlendListCamera
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: UISafeAreaHandler
+  - hash:
+      serializedVersion: 2
+      Hash: 930b2a7c015542327cee6af349728cdd
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: PauseScreenBehaviour
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MainMenuBehaviour
+  - hash:
+      serializedVersion: 2
+      Hash: 648cfb592c114019bdc0c66654896a57
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LevelManager
   platform: 13
   scenePathNames:
   - Assets/Scenes/ARLevel1.unity
-  playerPath: D:/Documents/UniStuff/Year 3/MobileGames/Builds/Test4.apk
+  playerPath: D:/Documents/UniStuff/Year 3/MobileGames/Builds/Test6.apk

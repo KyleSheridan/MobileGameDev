@@ -7,8 +7,6 @@ public class BallController : MonoBehaviour
 {
     public static BallController instance;
 
-    public GameObject winScreen;
-
     public Image powerBarFill;
 
     public GameObject areaAffector;
@@ -29,8 +27,6 @@ public class BallController : MonoBehaviour
     private bool canShoot = false;
     private bool isMoving = false;
     private Vector3 direction;
-
-    private bool win;
 
     private void Awake()
     {
@@ -55,64 +51,47 @@ public class BallController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (win)
+        if(LevelManager.Instance.Loading) { return; }
+
+        if(rb.velocity == Vector3.zero && isMoving)
         {
-            winScreen.SetActive(true);
+            isMoving = false;
+            rb.angularVelocity = Vector3.zero;
+            areaAffector.SetActive(true);
         }
-        else
+
+        if(Input.touchCount > 0)
         {
-            if(rb.velocity == Vector3.zero && isMoving)
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
             {
-                isMoving = false;
-                rb.angularVelocity = Vector3.zero;
-                areaAffector.SetActive(true);
+                case TouchPhase.Began:
+                    if (!isMoving && !canShoot)
+                    {
+                        startPos = ClickedPoint(touch.position);
+                        aimArrow.SetActive(true);
+                    }
+                    break;
+                case TouchPhase.Moved:
+                    if (!isMoving)
+                    {
+                        endPos = ClickedPoint(touch.position);
+                        CalculateForce();
+                    }
+                    break;
+                case TouchPhase.Ended:
+                    if (!isMoving)
+                    {
+                        canShoot = true;
+                        aimArrow.SetActive(false);
+                    }
+                    break;
             }
-
-            if(Input.touchCount > 0)
-            {
-                Touch touch = Input.GetTouch(0);
-
-                switch (touch.phase)
-                {
-                    case TouchPhase.Began:
-                        if (!isMoving && !canShoot)
-                        {
-                            startPos = ClickedPoint(touch.position);
-                            aimArrow.SetActive(true);
-                        }
-                        break;
-                    case TouchPhase.Moved:
-                        if (!isMoving)
-                        {
-                            endPos = ClickedPoint(touch.position);
-                            float startForce = Mathf.Clamp(Vector3.Distance(endPos, startPos) * forceModifier, 0, maxForce);
-
-                            //at 0 power startForce * powerBalance | at max power startForce * 1
-                            force = startForce * (powerBalance - ((powerBalance - 1) * (startForce / maxForce)));
-
-                            powerBarFill.fillAmount = startForce / maxForce;
-                            Vector3 dir = startPos - endPos;
-                            if(dir.magnitude > lineLength)
-                            {
-                                dir.Normalize();
-                                dir *= lineLength;
-                            }
-                            aimArrow.transform.rotation = Quaternion.LookRotation(dir);
-                        }
-                        break;
-                    case TouchPhase.Ended:
-                        if (!isMoving)
-                        {
-                            canShoot = true;
-                            aimArrow.SetActive(false);
-                        }
-                        break;
-                }
-            }
+        }
         
-            areaAffector.transform.position = transform.position;
-            aimArrow.transform.position = transform.position;
-        }
+        areaAffector.transform.position = transform.position;
+        aimArrow.transform.position = transform.position;
         
 
     }
@@ -121,14 +100,37 @@ public class BallController : MonoBehaviour
     {
         if (canShoot)
         {
-            canShoot = false;
-            direction = startPos - endPos;
-            rb.AddForce(direction * force, ForceMode.Impulse);
-            areaAffector.SetActive(false);
-            isMoving = true;
-            force = 0;
-            startPos = endPos = Vector3.zero;
+            HitBall();
         }
+    }
+
+    void HitBall()
+    {
+        canShoot = false;
+        direction = startPos - endPos;
+        rb.AddForce(direction * force, ForceMode.Impulse);
+        areaAffector.SetActive(false);
+        isMoving = true;
+        force = 0;
+        startPos = endPos = Vector3.zero;
+        LevelManager.Instance.IncrementShot();
+    }
+
+    void CalculateForce()
+    {
+        float startForce = Mathf.Clamp(Vector3.Distance(endPos, startPos) * forceModifier, 0, maxForce);
+
+        //at 0 power startForce * powerBalance | at max power startForce * 1
+        force = startForce * (powerBalance - ((powerBalance - 1) * (startForce / maxForce)));
+
+        powerBarFill.fillAmount = startForce / maxForce;
+        Vector3 dir = startPos - endPos;
+        if (dir.magnitude > lineLength)
+        {
+            dir.Normalize();
+            dir *= lineLength;
+        }
+        aimArrow.transform.rotation = Quaternion.LookRotation(dir);
     }
 
     Vector3 ClickedPoint(Vector3 point)
@@ -150,7 +152,7 @@ public class BallController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Hole"))
         {
-            win = true;
+            LevelManager.Instance.WinLevel();
         }
     }
 }

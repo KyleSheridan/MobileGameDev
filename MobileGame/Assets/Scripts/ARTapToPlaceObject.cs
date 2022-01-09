@@ -10,10 +10,13 @@ public class ARTapToPlaceObject : MonoBehaviour
 {
     public GameObject objectToPlace;
     public GameObject placementIndicator;
+    public GameObject placementIndicatorTexture;
+
+    public Material aimMat;
+    public Material placeMat;
 
     public Text planeTest;
 
-    private ARSessionOrigin arOrigin;
     private ARRaycastManager raycastManager;
 
     private Pose placementPose;
@@ -21,11 +24,14 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private bool levelPlaced = false;
 
+    private MeshRenderer placmentTexture;
+
     // Start is called before the first frame update
     void Start()
     {
-        arOrigin = FindObjectOfType<ARSessionOrigin>();
         raycastManager = FindObjectOfType<ARRaycastManager>();
+
+        placmentTexture = placementIndicatorTexture.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -35,9 +41,23 @@ public class ARTapToPlaceObject : MonoBehaviour
         UpdatePlacementPose();
         UpdatePlacementIndicator();
 
-        if(placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if(placementPoseIsValid && Input.touchCount > 0) 
         {
-            PlaceObject();
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    placmentTexture.material = placeMat;
+                    break;
+                case TouchPhase.Ended:
+                    PlaceObject();
+                    break;
+            }
+        }
+        else
+        {
+            placmentTexture.material = aimMat;
         }
     }
 
@@ -45,6 +65,7 @@ public class ARTapToPlaceObject : MonoBehaviour
     {
         Instantiate(objectToPlace, placementPose.position, placementPose.rotation);
         levelPlaced = true;
+        Destroy(placementIndicator);
     }
 
     private void UpdatePlacementIndicator()

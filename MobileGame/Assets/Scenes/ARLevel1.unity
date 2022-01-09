@@ -216,6 +216,9 @@ MonoBehaviour:
   objectToPlace: {fileID: 1851985999707747735, guid: bc555ae06294ea3428db0faf6a7bfaa1,
     type: 3}
   placementIndicator: {fileID: 418615501}
+  placementIndicatorTexture: {fileID: 665151294}
+  aimMat: {fileID: 2100000, guid: dbcb18f02d497ec4eaf5bd60e7f1db67, type: 2}
+  placeMat: {fileID: 2100000, guid: e425fe139b71c7b488509ccff3aec903, type: 2}
   planeTest: {fileID: 1156439579}
 --- !u!4 &358562224
 Transform:
