@@ -7,15 +7,20 @@ public class BallController : MonoBehaviour
 {
     public static BallController instance;
 
+    [Header("UI")]
     public Image powerBarFill;
 
     public GameObject areaAffector;
     public GameObject aimArrow;
-    public float maxForce, forceModifier;
-    public LayerMask rayLayer;
 
-    public float lineLength;
-    public float lineOffsetY;
+    [Header("Particles")]
+    public GameObject hitParticle;
+
+    [Header("Gameplay")]
+    public LayerMask rayLayer;
+    public float maxForce, forceModifier;
+
+    public float stopVelocity;
 
     private float force;
     private Rigidbody rb;
@@ -27,6 +32,8 @@ public class BallController : MonoBehaviour
     private bool canShoot = false;
     private bool isMoving = false;
     private Vector3 direction;
+
+    private bool velocityCheck = false;
 
     private void Awake()
     {
@@ -53,13 +60,6 @@ public class BallController : MonoBehaviour
     {
         if(LevelManager.Instance.Loading) { return; }
 
-        if(rb.velocity == Vector3.zero && isMoving)
-        {
-            isMoving = false;
-            rb.angularVelocity = Vector3.zero;
-            areaAffector.SetActive(true);
-        }
-
         if(Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -85,6 +85,7 @@ public class BallController : MonoBehaviour
                     {
                         canShoot = true;
                         aimArrow.SetActive(false);
+                        Instantiate(hitParticle, transform.position, Quaternion.identity);
                     }
                     break;
             }
@@ -98,10 +99,26 @@ public class BallController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (velocityCheck) { return; }
+
+        if (rb.velocity.magnitude <= stopVelocity && isMoving)
+        {
+            StartCoroutine(CheckVelocity());
+        }
+
         if (canShoot)
         {
             HitBall();
         }
+    }
+
+    void StopBall()
+    {
+        isMoving = false;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        areaAffector.SetActive(true);
+        LevelManager.Instance.IncrementShot();
     }
 
     void HitBall()
@@ -113,7 +130,6 @@ public class BallController : MonoBehaviour
         isMoving = true;
         force = 0;
         startPos = endPos = Vector3.zero;
-        LevelManager.Instance.IncrementShot();
     }
 
     void CalculateForce()
@@ -125,11 +141,7 @@ public class BallController : MonoBehaviour
 
         powerBarFill.fillAmount = startForce / maxForce;
         Vector3 dir = startPos - endPos;
-        if (dir.magnitude > lineLength)
-        {
-            dir.Normalize();
-            dir *= lineLength;
-        }
+        dir.Normalize();
         aimArrow.transform.rotation = Quaternion.LookRotation(dir);
     }
 
@@ -146,6 +158,22 @@ public class BallController : MonoBehaviour
         }
 
         return position;
+    }
+
+    IEnumerator CheckVelocity()
+    {
+        velocityCheck = true;
+
+        float startVelocity = rb.velocity.magnitude;
+
+        yield return new WaitForSeconds(0.3f);
+
+        if(rb.velocity.magnitude <= startVelocity)
+        {
+            StopBall();
+        }
+
+        velocityCheck = false;
     }
 
     private void OnTriggerEnter(Collider other)

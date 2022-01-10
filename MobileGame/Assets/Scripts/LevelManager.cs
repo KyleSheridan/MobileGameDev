@@ -16,6 +16,9 @@ public class LevelManager : MonoBehaviour
     public GameObject pauseButton;
     public TextMeshProUGUI hitsTakenText;
 
+    [Header("Particles")]
+    public GameObject[] winParticles;
+
     [Header("GamePlay")]
     public Transform ball;
 
@@ -26,6 +29,8 @@ public class LevelManager : MonoBehaviour
     public bool Loading { get; private set; }
 
     private float levelBaseY;
+
+    private bool playing = true;
 
     private void Awake()
     {
@@ -48,6 +53,8 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!playing) { return; }
+
         bool gameOverConditions = (CurrentShot > maxNumShots ||
                                    ball.position.y < levelBaseY);
 
@@ -68,6 +75,11 @@ public class LevelManager : MonoBehaviour
         winScreen.SetActive(true);
         ball.gameObject.SetActive(false);
         pauseButton.SetActive(false);
+
+        for (int i = 0; i < winParticles.Length; i++)
+        {
+            Instantiate(winParticles[i], ball.position, Quaternion.identity);
+        }
     }
 
     public void GameOver()
@@ -77,6 +89,7 @@ public class LevelManager : MonoBehaviour
         ball.gameObject.SetActive(false);
         hitsTakenText.gameObject.SetActive(false);
         pauseButton.SetActive(false);
+        playing = false;
     }
 
     IEnumerator Load()

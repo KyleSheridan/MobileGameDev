@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.Experimental.XR;
 using System;
@@ -15,7 +16,7 @@ public class ARTapToPlaceObject : MonoBehaviour
     public Material aimMat;
     public Material placeMat;
 
-    public Text planeTest;
+    public TextMeshProUGUI planeText;
 
     private ARRaycastManager raycastManager;
 
@@ -66,6 +67,7 @@ public class ARTapToPlaceObject : MonoBehaviour
         Instantiate(objectToPlace, placementPose.position, placementPose.rotation);
         levelPlaced = true;
         Destroy(placementIndicator);
+        planeText.gameObject.SetActive(false);
     }
 
     private void UpdatePlacementIndicator()
@@ -75,12 +77,12 @@ public class ARTapToPlaceObject : MonoBehaviour
             placementIndicator.SetActive(true);
             placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
 
-            planeTest.text = "Hit!";
+            planeText.text = "Tap to place level!";
         }
         else
         {
             placementIndicator.SetActive(false);
-            planeTest.text = "Not Hit";
+            planeText.text = "Aim camera at flat surface";
         }
     }
 
